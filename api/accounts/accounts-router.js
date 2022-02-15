@@ -16,7 +16,8 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", mw.checkAccountId, (req, res, next) => {
   // DO YOUR MAGIC
   try {
-    res.json({ message: "[GET] account by id" });
+    // res.json({ message: "[GET] account by id" });
+    res.json(req.account)
   } catch (err) {
     next(err);
   }
@@ -26,10 +27,15 @@ router.post(
   "/",
   mw.checkAccountPayload,
   mw.checkAccountNameUnique,
-  (req, res, next) => {
+  async (req, res, next) => {
     // DO YOUR MAGIC
     try {
-      res.json({ message: "[POST] account" });
+      // res.json({ message: "[POST] account" });
+      const account = await Account.create({
+        name: req.body.name.trim(),
+        budget: req.body.budget
+      })
+      res.status(201).json(account)
     } catch (err) {
       next(err);
     }
@@ -41,20 +47,24 @@ router.put(
   mw.checkAccountId,
   mw.checkAccountPayload,
   mw.checkAccountNameUnique,
-  (req, res, next) => {
+  async (req, res, next) => {
     // DO YOUR MAGIC
     try {
-      res.json({ message: "[PUT] account by id" });
+      // res.json({ message: "[PUT] account by id" });
+      const account = await Account.updateById(req.params.id, req.body)
+      res.json(account)
     } catch (err) {
       next(err);
     }
   }
 );
 
-router.delete("/:id", mw.checkAccountId, (req, res, next) => {
+router.delete("/:id", mw.checkAccountId, async (req, res, next) => {
   // DO YOUR MAGIC
   try {
-    res.json({ message: "[DELETE] account by id" });
+    // res.json({ message: "[DELETE] account by id" });
+    const account = await Account.deleteById(req.params.id)
+    res.json(req.account)
   } catch (err) {
     next(err);
   }
